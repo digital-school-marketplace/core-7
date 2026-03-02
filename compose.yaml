@@ -33,6 +33,26 @@ services:
         target: 443
         published: ${HTTP3_PORT:-443}
         protocol: udp
+    depends_on:
+      db:
+        condition: service_healthy
+  db:
+    image: mysql:8
+    container_name: core-7-db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: core-7-db
+      MYSQL_USER: username
+      MYSQL_PASSWORD: password
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 # Mercure is installed as a Caddy module, prevent the Flex recipe from installing another service
 ###> symfony/mercure-bundle ###
@@ -41,5 +61,6 @@ services:
 volumes:
   caddy_data:
   caddy_config:
+  db_data:
 ###> symfony/mercure-bundle ###
 ###< symfony/mercure-bundle ###
