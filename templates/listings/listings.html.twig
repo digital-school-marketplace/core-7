@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Current Listings</title>
+</head>
+<body>
+<h1>Current Listings</h1>
+{# Table for listings #}
+<table border="1">
+    <tr>
+        <th>Item</th>
+        <th>Condition</th>
+        <th>Price (€)</th>
+        <th>Seller</th>
+        <th>Date</th>
+        <th>Details</th>
+    </tr>
+    {# Listing info dynamically loaded into template #}
+    {% for listing in listings %}
+        <tr>
+            <td>{{ listing.item }}</td>
+            <td>{{ listing.condition }}</td>
+            <td>{{ listing.price }}</td>
+            <td>{{ listing.seller }}</td>
+            <td>{{ listing.date }}</td>
+            <td><a href="{{ path('listings_detailed', {'id': listing.id}) }}">Info</a></td>
+        </tr>
+    {% endfor %}
+</table>
+</body>
+</html>
