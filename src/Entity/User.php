@@ -20,6 +20,12 @@ class User
     #[ORM\OneToMany(targetEntity: Listing::class, mappedBy: 'user')]
     private \Doctrine\Common\Collections\Collection $listings;
 
+    #[ORM\Column(length: 255)]
+    private ?string $email = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $password = null;
+
     public function __construct()
     {
         $this->listings = new ArrayCollection();
@@ -56,6 +62,30 @@ class User
                 $listing->setUser(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    public function setEmail(string $email): static
+    {
+        $this->email = $email;
+
+        return $this;
+    }
+
+    public function getPassword(): ?string
+    {
+        return $this->password;
+    }
+
+    public function setPassword(string $password): static
+    {
+        $this->password = $password;
 
         return $this;
     }

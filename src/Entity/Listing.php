@@ -17,12 +17,6 @@ class Listing
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $seller = null;
-
-    #[ORM\Column(length: 255)]
-    private ?string $date = null;
-
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
     private ?string $price = null;
 
@@ -32,6 +26,9 @@ class Listing
 
     #[ORM\ManyToOne(inversedBy: 'listings')]
     private ?Category $category = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $description = null;
 
     public function getId(): ?int
     {
@@ -46,30 +43,6 @@ class Listing
     public function setName(string $name): static
     {
         $this->name = $name;
-
-        return $this;
-    }
-
-    public function getSeller(): ?string
-    {
-        return $this->seller;
-    }
-
-    public function setSeller(string $seller): static
-    {
-        $this->seller = $seller;
-
-        return $this;
-    }
-
-    public function getDate(): ?string
-    {
-        return $this->date;
-    }
-
-    public function setDate(string $date): static
-    {
-        $this->date = $date;
 
         return $this;
     }
@@ -106,6 +79,18 @@ class Listing
     public function setCategory(?Category $category): static
     {
         $this->category = $category;
+
+        return $this;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(string $description): static
+    {
+        $this->description = $description;
 
         return $this;
     }
