@@ -25,11 +25,24 @@ security:
                 target: app_login
 
     access_control:
+        # Public auth routes
         - { path: ^/login, roles: PUBLIC_ACCESS }
+        - { path: ^/logout, roles: PUBLIC_ACCESS }
+
+        # Registration is public, everything else on /users requires login
         - { path: ^/users/new, roles: PUBLIC_ACCESS }
-        - { path: ^/users, roles: ROLE_USER }
+        - { path: ^/users/\d+/edit, roles: ROLE_USER }
+        - { path: ^/users/\d+, methods: [ GET ], roles: PUBLIC_ACCESS }
+        - { path: ^/users/\d+, methods: [ POST ], roles: ROLE_USER }
+        - { path: ^/users, roles: ROLE_ADMIN }
+
+        # Categories are admin-only
+        - { path: ^/categories, roles: ROLE_ADMIN }
+
+        # Listing mutations require login
         - { path: ^/listings/new, roles: ROLE_USER }
         - { path: ^/listings/\d+/edit, roles: ROLE_USER }
-        - { path: ^/listings/\d+$, methods: [ POST ], roles: ROLE_USER }
+        - { path: ^/listings/\d+, methods: [ POST ], roles: ROLE_USER }
+
+        # Browsing listings is public
         - { path: ^/listings, roles: PUBLIC_ACCESS }
-        - { path: ^/categories, roles: ROLE_ADMIN }
