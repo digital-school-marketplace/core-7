@@ -20,11 +20,12 @@ class Listing
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
     private ?string $price = null;
 
-    #[ORM\ManyToOne(inversedBy: 'listings')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'listings')]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private ?User $user = null;
 
-    #[ORM\ManyToOne(inversedBy: 'listings')]
+    #[ORM\ManyToOne(targetEntity: Category::class, inversedBy: 'listings')]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private ?Category $category = null;
 
     #[ORM\Column(length: 255)]

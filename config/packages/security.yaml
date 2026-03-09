@@ -29,6 +29,7 @@ security:
     access_control:
         - { path: ^/login, roles: PUBLIC_ACCESS }
         - { path: ^/users/new, roles: PUBLIC_ACCESS }
+        - { path: ^/users, roles: ROLE_USER }
         - { path: ^/listings/new, roles: ROLE_USER }
         - { path: ^/listings/\d+/edit, roles: ROLE_USER }
         - { path: ^/listings/\d+$, methods: [ POST ], roles: ROLE_USER }
