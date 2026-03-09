@@ -6,9 +6,6 @@ use App\Entity\Category;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
-/**
- * @extends ServiceEntityRepository<Category>
- */
 class CategoryRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
@@ -16,28 +13,38 @@ class CategoryRepository extends ServiceEntityRepository
         parent::__construct($registry, Category::class);
     }
 
-    //    /**
-    //     * @return Category[] Returns an array of Category objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('c')
-    //            ->andWhere('c.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('c.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    /**
+     * Find categories sorted alphabetically
+     */
+    public function findAllSorted(): array
+    {
+        return $this->createQueryBuilder('c')
+            ->orderBy('c.name', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
 
-    //    public function findOneBySomeField($value): ?Category
-    //    {
-    //        return $this->createQueryBuilder('c')
-    //            ->andWhere('c.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+    /**
+     * Pagination for categories
+     */
+    public function findPaginated(int $page = 1, int $limit = 10): array
+    {
+        return $this->createQueryBuilder('c')
+            ->setFirstResult(($page - 1) * $limit)
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * Find categories with listings (optimized query)
+     */
+    public function findWithListings(): array
+    {
+        return $this->createQueryBuilder('c')
+            ->leftJoin('c.listings', 'l')
+            ->addSelect('l')
+            ->getQuery()
+            ->getResult();
+    }
 }
