@@ -7,7 +7,8 @@
             <div class="flash flash-success">{{ message }}</div>
         {% endfor %}
 
-        <a href="{{ path('listing_index') }}" class="btn btn-ghost" style="margin-bottom: 1.25rem;">← Back to listings</a>
+        <a href="{{ path('listing_index') }}" class="btn btn-ghost" style="margin-bottom: 1.25rem;">← Back to
+            listings</a>
 
         <div class="card">
             {% if listing.category %}
@@ -22,7 +23,10 @@
             <hr class="divider">
 
             <p style="font-size: 0.85rem; color: var(--text-faint);">
-                Listed by <strong style="color: var(--text-muted);">{{ listing.user ? listing.user.email : 'Deleted user' }}</strong>
+                Listed by <a href="{{ listing.user ? path('user_show', { id: listing.user.id }) : '#' }}">
+                    <strong
+                        style="color: var(--text-muted);">{{ listing.user ? listing.user.email : 'Deleted user' }}</strong>
+                </a>
             </p>
 
             {% if app.user and listing.user != null and app.user.id == listing.user.id %}
@@ -30,7 +34,9 @@
                     <a href="{{ path('listing_edit', { id: listing.id }) }}" class="btn btn-secondary">Edit listing</a>
                     <form method="post" action="{{ path('listing_delete', { id: listing.id }) }}" style="margin: 0;">
                         <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ listing.id) }}">
-                        <button type="submit" class="btn btn-danger" onclick="return confirm('Delete this listing?')">Delete</button>
+                        <button type="submit" class="btn btn-danger" onclick="return confirm('Delete this listing?')">
+                            Delete
+                        </button>
                     </form>
                 </div>
             {% endif %}
