@@ -95,4 +95,19 @@
             </div>
         {% endif %}
     </div>
+    {% if listings|length > 0 %}
+        <div style="display: flex; justify-content: center; gap: 0.5rem; margin-top: 2rem;">
+            {% if currentPage > 1 %}
+                <a href="{{ path('listing_index', filters|merge({'page': currentPage - 1})) }}" class="btn btn-secondary">← Prev</a>
+            {% endif %}
+
+            <span style="display: flex; align-items: center; padding: 0 1rem; color: var(--text-muted);">
+            Page {{ currentPage }}
+        </span>
+
+            {% if listings|length >= 12 %}
+                <a href="{{ path('listing_index', filters|merge({'page': currentPage + 1})) }}" class="btn btn-secondary">Next →</a>
+            {% endif %}
+        </div>
+    {% endif %}
 {% endblock %}
