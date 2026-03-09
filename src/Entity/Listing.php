@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\ListingRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use function Symfony\Component\Clock\now;
 
 #[ORM\Entity(repositoryClass: ListingRepository::class)]
 class Listing
@@ -20,6 +21,9 @@ class Listing
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
     private ?string $price = null;
 
+    #[ORM\Column]
+    private ?\DateTimeImmutable $createdAt = null;
+
     #[ORM\ManyToOne(inversedBy: 'listings')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
@@ -29,6 +33,23 @@ class Listing
 
     #[ORM\Column(length: 255)]
     private ?string $description = null;
+
+    public function __construct()
+    {
+        $this->createdAt = new \DateTimeImmutable();
+    }
+
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeImmutable $createdAt): static
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
 
     public function getId(): ?int
     {

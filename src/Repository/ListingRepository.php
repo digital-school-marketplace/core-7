@@ -94,4 +94,24 @@ class ListingRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    public function findRecommendations(Listing $listing, int $limit = 4): array
+    {
+        $qb = $this->createQueryBuilder('l')
+            ->where('l.id != :id')
+            ->setParameter('id', $listing->getId())
+            ->setMaxResults($limit);
+
+        // If the listing has a category, prioritize same-category listings
+        if ($listing->getCategory() !== null) {
+            $qb->addSelect('CASE WHEN l.category = :category THEN 0 ELSE 1 END AS HIDDEN relevance')
+                ->setParameter('category', $listing->getCategory())
+                ->orderBy('relevance', 'ASC');
+        }
+
+        // Secondary sort: newest first
+        $qb->addOrderBy('l.createdAt', 'DESC');
+
+        return $qb->getQuery()->getResult();
+    }
 }

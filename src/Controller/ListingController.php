@@ -47,17 +47,6 @@ class ListingController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'show', methods: ['GET'])]
-    public function show(Listing $listing): Response
-    {
-        $recommendations = $this->listingRepository->findRecommendations($listing);
-
-        return $this->render('listing/show.html.twig', [
-            'listing'         => $listing,
-            'recommendations' => $recommendations,
-        ]);
-    }
-
     #[Route('/new', name: 'new', methods: ['GET', 'POST'])]
     public function new(Request $request): Response
     {
@@ -66,6 +55,7 @@ class ListingController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $listing->setUser($this->getUser());
             $this->em->persist($listing);
             $this->em->flush();
 
@@ -76,6 +66,17 @@ class ListingController extends AbstractController
 
         return $this->render('listing/new.html.twig', [
             'form' => $form,
+        ]);
+    }
+
+    #[Route('/{id}', name: 'show', methods: ['GET'])]
+    public function show(Listing $listing): Response
+    {
+        $recommendations = $this->listingRepository->findRecommendations($listing);
+
+        return $this->render('listing/show.html.twig', [
+            'listing'         => $listing,
+            'recommendations' => $recommendations,
         ]);
     }
 
