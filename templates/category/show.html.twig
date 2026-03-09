@@ -1,25 +1,46 @@
 {% extends 'base.html.twig' %}
+{% block title %}{{ category.name }} — Markét{% endblock %}
 
 {% block body %}
-    <h1>{{ category.name }}</h1>
+    <div class="page">
+        <a href="{{ path('category_index') }}" class="btn btn-ghost" style="margin-bottom: 1.25rem;">← Back to categories</a>
 
-    <p>{{ category.listings|length }} listing(s) in this category</p>
-
-    {% for listing in category.listings %}
-        <div>
-            <a href="{{ path('listing_show', { id: listing.id }) }}">{{ listing.name }}</a>
-            — ${{ listing.price }}
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+            <div>
+                <h1 style="margin-bottom: 0.25rem;">{{ category.name }}</h1>
+                <p style="color: var(--text-muted); font-size: 0.9rem;">{{ category.listings|length }} listing{{ category.listings|length != 1 ? 's' : '' }}</p>
+            </div>
+            <div style="display: flex; gap: 0.75rem;">
+                <a href="{{ path('category_edit', { id: category.id }) }}" class="btn btn-secondary">Edit category</a>
+                <form method="post" action="{{ path('category_delete', { id: category.id }) }}" style="margin: 0;">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ category.id) }}">
+                    <button type="submit" class="btn btn-danger" onclick="return confirm('Delete this category?')">Delete</button>
+                </form>
+            </div>
         </div>
-    {% else %}
-        <p>No listings in this category yet.</p>
-    {% endfor %}
 
-    <a href="{{ path('category_edit', { id: category.id }) }}">Edit</a>
-
-    <form method="post" action="{{ path('category_delete', { id: category.id }) }}">
-        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ category.id) }}">
-        <button type="submit" onclick="return confirm('Delete this category?')">Delete</button>
-    </form>
-
-    <a href="{{ path('category_index') }}">Back to categories</a>
+        {% if category.listings|length > 0 %}
+            <div class="listings-grid">
+                {% for listing in category.listings %}
+                    <a href="{{ path('listing_show', { id: listing.id }) }}" class="listing-card">
+                        <span class="listing-card-category">{{ category.name }}</span>
+                        <div class="listing-card-title">{{ listing.name }}</div>
+                        <div class="listing-card-desc">
+                            {{ listing.description|slice(0, 110) }}{% if listing.description|length > 110 %}…{% endif %}
+                        </div>
+                        <div class="listing-card-footer">
+                            <span class="listing-card-price">€{{ listing.price }}</span>
+                            <span class="listing-card-user">{{ listing.user.email }}</span>
+                        </div>
+                    </a>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty">
+                <div class="empty-icon">📭</div>
+                <p>No listings in this category yet.</p>
+                <a href="{{ path('listing_new') }}" class="btn btn-primary">Add a listing</a>
+            </div>
+        {% endif %}
+    </div>
 {% endblock %}

@@ -1,24 +1,47 @@
 {% extends 'base.html.twig' %}
+{% block title %}Users — SchoolMarket{% endblock %}
 
 {% block body %}
-    <h1>Users</h1>
-    <a href="{{ path('user_new') }}">Add User</a>
+    <div class="page">
+        {% for message in app.flashes('success') %}
+            <div class="flash flash-success">{{ message }}</div>
+        {% endfor %}
 
-    {% for message in app.flashes('success') %}
-        <div class="alert alert-success">{{ message }}</div>
-    {% endfor %}
-
-    {% for user in users %}
-        <div>
-            <p>{{ user.email }}</p>
-            <a href="{{ path('user_show', { id: user.id }) }}">View</a>
-            <a href="{{ path('user_edit', { id: user.id }) }}">Edit</a>
-            <form method="post" action="{{ path('user_delete', { id: user.id }) }}">
-                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ user.id) }}">
-                <button type="submit" onclick="return confirm('Delete this user?')">Delete</button>
-            </form>
+        <div class="page-header">
+            <h1>Users</h1>
+            <a href="{{ path('user_new') }}" class="btn btn-primary">+ Add user</a>
         </div>
-    {% else %}
-        <p>No users found.</p>
-    {% endfor %}
+
+        {% if users|length > 0 %}
+            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                {% for user in users %}
+                    <div class="card" style="padding: 1rem 1.5rem; display: flex; align-items: center; justify-content: space-between; border-radius: var(--radius); gap: 1rem; flex-wrap: wrap;">
+                        <div style="display: flex; align-items: center; gap: 1rem;">
+                            <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--primary-light); display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-weight: 900; color: var(--primary); flex-shrink: 0;">
+                                {{ user.email|first|upper }}
+                            </div>
+                            <div>
+                                <div style="font-weight: 600;">{{ user.email }}</div>
+                                <div style="font-size: 0.8rem; color: var(--text-muted);">{{ user.listings|length }} listing{{ user.listings|length != 1 ? 's' : '' }}</div>
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <a href="{{ path('user_show', { id: user.id }) }}" class="btn btn-secondary" style="padding: 0.45rem 0.9rem;">View</a>
+                            <a href="{{ path('user_edit', { id: user.id }) }}" class="btn btn-ghost" style="padding: 0.45rem 0.9rem;">Edit</a>
+                            <form method="post" action="{{ path('user_delete', { id: user.id }) }}" style="margin: 0;">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ user.id) }}">
+                                <button type="submit" class="btn btn-danger" style="padding: 0.45rem 0.9rem;" onclick="return confirm('Delete this user?')">Delete</button>
+                            </form>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty">
+                <div class="empty-icon">👥</div>
+                <p>No users yet.</p>
+                <a href="{{ path('user_new') }}" class="btn btn-primary">Add the first user</a>
+            </div>
+        {% endif %}
+    </div>
 {% endblock %}

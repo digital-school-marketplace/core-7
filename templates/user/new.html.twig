@@ -1,12 +1,41 @@
 {% extends 'base.html.twig' %}
+{% block title %}Create Account — Markét{% endblock %}
 
 {% block body %}
-    <h1>New User</h1>
-    {{ form_start(form) }}
-    {{ form_errors(form) }}
-    {{ form_row(form.email) }}
-    {{ form_row(form.plainPassword) }}
-    <button type="submit">Create User</button>
-    {{ form_end(form) }}
-    <a href="{{ path('user_index') }}">Cancel</a>
+    <div class="page-sm">
+        <div style="text-align: center; margin-bottom: 2rem; margin-top: 1rem;">
+            <a href="{{ path('listing_index') }}" style="font-family: var(--font-display); font-weight: 900; font-size: 2rem; color: var(--primary); text-decoration: none; letter-spacing: -0.03em;">Markét</a>
+            <p style="color: var(--text-muted); margin-top: 0.5rem; font-size: 0.95rem;">Create an account to start buying and selling</p>
+        </div>
+
+        {% for message in app.flashes('success') %}
+            <div class="flash flash-success">{{ message }}</div>
+        {% endfor %}
+
+        <div class="card">
+            {{ form_start(form) }}
+            {{ form_errors(form) }}
+            <div class="form-group">
+                {{ form_label(form.email) }}
+                {{ form_widget(form.email) }}
+                <div class="form-error">{{ form_errors(form.email) }}</div>
+            </div>
+            <div class="form-group">
+                {{ form_label(form.plainPassword.first) }}
+                {{ form_widget(form.plainPassword.first) }}
+                <div class="form-error">{{ form_errors(form.plainPassword.first) }}</div>
+            </div>
+            <div class="form-group">
+                {{ form_label(form.plainPassword.second) }}
+                {{ form_widget(form.plainPassword.second) }}
+                <div class="form-error">{{ form_errors(form.plainPassword) }}</div>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; padding: 0.8rem;">Create account</button>
+            {{ form_end(form) }}
+        </div>
+
+        <p style="text-align: center; margin-top: 1.25rem; font-size: 0.875rem; color: var(--text-muted);">
+            Already have an account? <a href="{{ path('app_login') }}" style="color: var(--primary); font-weight: 600;">Log in</a>
+        </p>
+    </div>
 {% endblock %}

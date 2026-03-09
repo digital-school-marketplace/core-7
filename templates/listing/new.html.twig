@@ -1,18 +1,26 @@
 {% extends 'base.html.twig' %}
+{% block title %}New Listing — SchoolMarket{% endblock %}
 
 {% block body %}
-    <h1>New Listing</h1>
+    <div class="page-sm">
+        <a href="{{ path('listing_index') }}" class="btn btn-ghost" style="margin-bottom: 1.25rem;">← Back</a>
+        <h1 style="margin-bottom: 1.5rem;">New listing</h1>
 
-    {{ form_start(form) }}
-    {{ form_errors(form) }}
-
-    {{ form_row(form.name) }}
-    {{ form_row(form.description) }}
-    {{ form_row(form.price) }}
-    {{ form_row(form.category) }}
-
-    <button type="submit">Create Listing</button>
-    {{ form_end(form) }}
-
-    <a href="{{ path('listing_index') }}">Back to listings</a>
+        <div class="card">
+            {{ form_start(form) }}
+            {{ form_errors(form) }}
+            {% for field in ['name', 'description', 'price', 'category'] %}
+                <div class="form-group">
+                    {{ form_label(form[field]) }}
+                    {{ form_widget(form[field]) }}
+                    <div class="form-error">{{ form_errors(form[field]) }}</div>
+                </div>
+            {% endfor %}
+            <div class="btn-row">
+                <button type="submit" class="btn btn-primary">Create listing</button>
+                <a href="{{ path('listing_index') }}" class="btn btn-ghost">Cancel</a>
+            </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
 {% endblock %}

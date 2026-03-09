@@ -1,15 +1,124 @@
 {% extends 'base.html.twig' %}
+{% block title %}{{ user.email }} — Markét{% endblock %}
 
 {% block body %}
-    <h1>{{ user.email }}</h1>
-    <p>Listings: {{ user.listings|length }}</p>
+    <div class="page-sm">
+        {% for message in app.flashes('success') %}
+            <div class="flash flash-success">{{ message }}</div>
+        {% endfor %}
+        {% for message in app.flashes('danger') %}
+            <div class="flash flash-danger">{{ message }}</div>
+        {% endfor %}
 
-    <a href="{{ path('user_edit', { id: user.id }) }}">Edit Account</a>
+        <div class="card" style="margin-bottom: 1.25rem;">
+            <div style="display: flex; align-items: center; gap: 1.25rem; margin-bottom: 1.5rem;">
+                <div style="width: 56px; height: 56px; border-radius: 50%; background: var(--primary-light); display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-weight: 900; font-size: 1.4rem; color: var(--primary); flex-shrink: 0;">
+                    {{ user.email|first|upper }}
+                </div>
+                <div>
+                    <h1 style="font-size: 1.4rem; margin-bottom: 0.1rem;">{{ user.email }}</h1>
+                    <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+                    <span style="font-size: 0.85rem; color: var(--text-muted);">
+                        {{ user.listings|length }} listing{{ user.listings|length != 1 ? 's' : '' }}
+                    </span>
+                        {% set avg = user.averageRating %}
+                        {% if avg %}
+                            <span style="font-size: 0.85rem; color: var(--text-muted);">
+                            ⭐ {{ avg }}/5
+                            <span style="color: var(--text-faint);">({{ user.ratingsReceived|length }} review{{ user.ratingsReceived|length != 1 ? 's' : '' }})</span>
+                        </span>
+                        {% else %}
+                            <span style="font-size: 0.85rem; color: var(--text-faint);">No ratings yet</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
 
-    <form method="post" action="{{ path('user_delete', { id: user.id }) }}">
-        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ user.id) }}">
-        <button type="submit" onclick="return confirm('Delete your account?')">Delete Account</button>
-    </form>
+            {% if app.user and app.user.id == user.id %}
+                <div class="btn-row" style="margin-top: 0;">
+                    <a href="{{ path('user_edit', { id: user.id }) }}" class="btn btn-secondary">Edit account</a>
+                    <form method="post" action="{{ path('user_delete', { id: user.id }) }}" style="margin: 0;">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ user.id) }}">
+                        <button type="submit" class="btn btn-danger" onclick="return confirm('Permanently delete your account?')">Delete account</button>
+                    </form>
+                </div>
+            {% endif %}
+        </div>
 
-    <a href="{{ path('user_index') }}">Back</a>
+        {# Rate this seller — only shown to other logged-in users #}
+        {% if app.user and app.user.id != user.id %}
+            <div class="card" style="margin-bottom: 1.25rem;">
+                <h2 style="font-size: 1rem; font-weight: 700; margin-bottom: 1rem; font-family: var(--font-display);">Rate this seller</h2>
+                <form method="post" action="{{ path('user_rate', { id: user.id }) }}">
+                    <input type="hidden" name="_token" value="{{ csrf_token('rate' ~ user.id) }}">
+                    <div class="form-group">
+                        <label for="score">Score</label>
+                        <select name="score" id="score">
+                            <option value="5">⭐⭐⭐⭐⭐ — Excellent</option>
+                            <option value="4">⭐⭐⭐⭐ — Good</option>
+                            <option value="3">⭐⭐⭐ — Okay</option>
+                            <option value="2">⭐⭐ — Poor</option>
+                            <option value="1">⭐ — Terrible</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="comment">Comment <span style="font-weight:400; color: var(--text-faint);">(optional)</span></label>
+                        <textarea name="comment" id="comment" rows="3" placeholder="Describe your experience with this seller..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit rating</button>
+                </form>
+            </div>
+        {% endif %}
+
+        {# Reviews received #}
+        {% if user.ratingsReceived|length > 0 %}
+            <div style="margin-bottom: 1.5rem;">
+                <h2 style="font-family: var(--font-display); font-size: 1.1rem; font-weight: 700; margin-bottom: 1rem; letter-spacing: -0.01em;">Reviews</h2>
+                <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                    {% for rating in user.ratingsReceived %}
+                        <div class="card" style="padding: 1rem 1.25rem; border-radius: var(--radius);">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
+                                <span style="font-weight: 600; font-size: 0.875rem;">{{ rating.rater.email }}</span>
+                                <span style="font-size: 0.85rem; color: var(--text-muted);">
+                                {% for i in 1..5 %}{{ i <= rating.score ? '⭐' : '☆' }}{% endfor %}
+                            </span>
+                            </div>
+                            {% if rating.comment %}
+                                <p style="font-size: 0.875rem; color: var(--text-muted); margin: 0;">{{ rating.comment }}</p>
+                            {% endif %}
+                            <p style="font-size: 0.75rem; color: var(--text-faint); margin-top: 0.4rem;">
+                                {{ rating.createdAt|date('d M Y') }}
+                            </p>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+
+        {# Listings #}
+        {% if user.listings|length > 0 %}
+            <h2 style="font-family: var(--font-display); font-size: 1.1rem; font-weight: 700; margin-bottom: 1rem; letter-spacing: -0.01em;">Listings</h2>
+            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                {% for listing in user.listings %}
+                    <a href="{{ path('listing_show', { id: listing.id }) }}" style="text-decoration: none; color: inherit;">
+                        <div class="card" style="padding: 1rem 1.25rem; display: flex; justify-content: space-between; align-items: center; border-radius: var(--radius); transition: box-shadow 0.15s;" onmouseover="this.style.boxShadow='var(--shadow-lg)'" onmouseout="this.style.boxShadow=''">
+                            <div>
+                                <div style="font-weight: 600; font-size: 0.95rem;">{{ listing.name }}</div>
+                                <div style="font-size: 0.8rem; color: var(--text-muted);">{{ listing.category ? listing.category.name : 'Uncategorised' }}</div>
+                            </div>
+                            <div style="font-family: var(--font-display); font-weight: 700; font-size: 1.1rem;">€{{ listing.price }}</div>
+                        </div>
+                    </a>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty" style="padding: 3rem 1rem;">
+                <div class="empty-icon">📦</div>
+                <p>No listings yet.</p>
+                {% if app.user and app.user.id == user.id %}
+                    <a href="{{ path('listing_new') }}" class="btn btn-primary">Create your first listing</a>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
 {% endblock %}

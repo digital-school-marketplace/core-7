@@ -54,20 +54,41 @@ class ListingRepository extends ServiceEntityRepository
     /**
      * Complex query: filter by category and sort by price
      */
-    public function findFiltered(?int $categoryId, string $sort = 'ASC', int $page = 1, int $limit = 10): array
-    {
+    public function findFiltered(
+        ?int $categoryId = null,
+        ?float $minPrice = null,
+        ?float $maxPrice = null,
+        string $sortBy = 'newest',
+        int $page = 1,
+        int $limit = 20,
+    ): array {
         $qb = $this->createQueryBuilder('l')
-            ->leftJoin('l.category', 'c')
-            ->addSelect('c');
+            ->leftJoin('l.category', 'c')->addSelect('c')
+            ->leftJoin('l.user', 'u')->addSelect('u');
 
-
-        if ($categoryId) {
+        if ($categoryId !== null) {
             $qb->andWhere('c.id = :category')
                 ->setParameter('category', $categoryId);
         }
 
+        if ($minPrice !== null) {
+            $qb->andWhere('l.price >= :minPrice')
+                ->setParameter('minPrice', $minPrice);
+        }
+
+        if ($maxPrice !== null) {
+            $qb->andWhere('l.price <= :maxPrice')
+                ->setParameter('maxPrice', $maxPrice);
+        }
+
+        match ($sortBy) {
+            'price_asc'  => $qb->orderBy('l.price', 'ASC'),
+            'price_desc' => $qb->orderBy('l.price', 'DESC'),
+            'oldest'     => $qb->orderBy('l.id', 'ASC'),
+            default      => $qb->orderBy('l.id', 'DESC'),
+        };
+
         return $qb
-            ->orderBy('l.price', $sort)
             ->setFirstResult(($page - 1) * $limit)
             ->setMaxResults($limit)
             ->getQuery()

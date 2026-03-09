@@ -1,13 +1,24 @@
 {% extends 'base.html.twig' %}
+{% block title %}Edit {{ category.name }} — SchoolMarket{% endblock %}
 
 {% block body %}
-    <h1>Edit Category: {{ category.name }}</h1>
+    <div class="page-sm">
+        <a href="{{ path('category_show', { id: category.id }) }}" class="btn btn-ghost" style="margin-bottom: 1.25rem;">← Back</a>
+        <h1 style="margin-bottom: 1.5rem;">Edit category</h1>
 
-    {{ form_start(form) }}
-    {{ form_errors(form) }}
-    {{ form_row(form.name) }}
-    <button type="submit">Save Changes</button>
-    {{ form_end(form) }}
-
-    <a href="{{ path('category_show', { id: category.id }) }}">Cancel</a>
+        <div class="card">
+            {{ form_start(form) }}
+            {{ form_errors(form) }}
+            <div class="form-group">
+                {{ form_label(form.name) }}
+                {{ form_widget(form.name) }}
+                <div class="form-error">{{ form_errors(form.name) }}</div>
+            </div>
+            <div class="btn-row">
+                <button type="submit" class="btn btn-primary">Save changes</button>
+                <a href="{{ path('category_show', { id: category.id }) }}" class="btn btn-ghost">Cancel</a>
+            </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
 {% endblock %}

@@ -25,6 +25,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255)]
     private ?string $password = null;
 
+    #[ORM\Column(type: 'json')]
+    private array $roles = [];
+
+    #[ORM\OneToMany(targetEntity: Rating::class, mappedBy: 'seller', orphanRemoval: true)]
+    private Collection $ratingsReceived;
+
     /**
      * @var Collection<int, Listing>
      */
@@ -34,6 +40,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function __construct()
     {
         $this->listings = new ArrayCollection();
+        $this->ratingsReceived = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -63,25 +70,29 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    // UserInterface
-    public function getUserIdentifier(): string
-    {
-        return (string) $this->email;
-    }
-
     public function getRoles(): array
     {
-        return ['ROLE_USER'];
+        $roles = $this->roles;
+        $roles[] = 'ROLE_USER'; // every user always has this
+        return array_unique($roles);
+    }
+
+    public function setRoles(array $roles): static  // ← new
+    {
+        $this->roles = $roles;
+        return $this;
+    }
+
+    public function getUserIdentifier(): string
+    {
+        return (string)$this->email;
     }
 
     public function eraseCredentials(): void
     {
-        // clear any temporary plain-text password if stored on the entity
     }
 
-    /**
-     * @return Collection<int, Listing>
-     */
+    /** @return Collection<int, Listing> */
     public function getListings(): Collection
     {
         return $this->listings;
@@ -104,5 +115,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             }
         }
         return $this;
+    }
+
+    public function getRatingsReceived(): Collection
+    {
+        return $this->ratingsReceived;
+    }
+
+    public function getAverageRating(): ?float
+    {
+        if ($this->ratingsReceived->isEmpty()) {
+            return null;
+        }
+        $total = array_sum(
+            $this->ratingsReceived->map(fn(Rating $r) => $r->getScore())->toArray()
+        );
+        return round($total / $this->ratingsReceived->count(), 1);
     }
 }
