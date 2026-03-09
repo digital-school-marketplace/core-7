@@ -1,0 +1,69 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ status_code }} — {{ status_text }}{% endblock %}
+
+{% block body %}
+    <div class="page" style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 60vh; text-align: center;">
+
+        {% if status_code == 404 %}
+            <div style="font-size: 4rem; margin-bottom: 1rem;">🔍</div>
+            <h1>Page not found</h1>
+            <p style="color: var(--text-muted); margin-bottom: 1.5rem;">The page or listing you're looking for doesn't exist or has been removed.</p>
+
+        {% elseif status_code == 403 %}
+            <div style="font-size: 4rem; margin-bottom: 1rem;">🔒</div>
+            <h1>Access denied</h1>
+            <p style="color: var(--text-muted); margin-bottom: 1.5rem;">You don't have permission to view this page.</p>
+
+        {% elseif status_code == 401 %}
+            <div style="font-size: 4rem; margin-bottom: 1rem;">🔑</div>
+            <h1>Login required</h1>
+            <p style="color: var(--text-muted); margin-bottom: 1.5rem;">You need to be logged in to access this page.</p>
+
+        {% elseif status_code == 405 %}
+            <div style="font-size: 4rem; margin-bottom: 1rem;">🚫</div>
+            <h1>Method not allowed</h1>
+            <p style="color: var(--text-muted); margin-bottom: 1.5rem;">This action isn't allowed here.</p>
+
+        {% elseif status_code == 408 %}
+            <div style="font-size: 4rem; margin-bottom: 1rem;">⏱️</div>
+            <h1>Request timeout</h1>
+            <p style="color: var(--text-muted); margin-bottom: 1.5rem;">The request took too long. Please try again.</p>
+
+        {% elseif status_code == 419 %}
+            <div style="font-size: 4rem; margin-bottom: 1rem;">🔄</div>
+            <h1>Session expired</h1>
+            <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Your session has expired. Please refresh and try again.</p>
+
+        {% elseif status_code == 422 %}
+            <div style="font-size: 4rem; margin-bottom: 1rem;">📋</div>
+            <h1>Invalid data</h1>
+            <p style="color: var(--text-muted); margin-bottom: 1.5rem;">The submitted data could not be processed.</p>
+
+        {% elseif status_code == 429 %}
+            <div style="font-size: 4rem; margin-bottom: 1rem;">🐢</div>
+            <h1>Too many requests</h1>
+            <p style="color: var(--text-muted); margin-bottom: 1.5rem;">You're doing that too often. Please wait a moment and try again.</p>
+
+        {% elseif status_code >= 500 %}
+            <div style="font-size: 4rem; margin-bottom: 1rem;">⚠️</div>
+            <h1>Something went wrong</h1>
+            <p style="color: var(--text-muted); margin-bottom: 1.5rem;">We're having trouble on our end. Please try again in a moment.</p>
+
+        {% else %}
+            <div style="font-size: 4rem; margin-bottom: 1rem;">❓</div>
+            <h1>{{ status_code }} — {{ status_text }}</h1>
+            <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Something unexpected happened.</p>
+        {% endif %}
+
+        <div style="display: flex; gap: 0.75rem; justify-content: center;">
+            <a href="{{ path('listing_index') }}" class="btn btn-primary">Go to listings</a>
+            <a href="javascript:history.back()" class="btn btn-secondary">Go back</a>
+            {% if status_code == 401 or status_code == 403 %}
+                <a href="{{ path('app_login') }}" class="btn btn-secondary">Log in</a>
+            {% endif %}
+        </div>
+
+        <p style="margin-top: 2rem; font-size: 0.8rem; color: var(--text-muted);">Error {{ status_code }}</p>
+    </div>
+{% endblock %}
