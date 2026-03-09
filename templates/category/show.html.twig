@@ -30,7 +30,7 @@
                         </div>
                         <div class="listing-card-footer">
                             <span class="listing-card-price">€{{ listing.price }}</span>
-                            <span class="listing-card-user">{{ listing.user.email }}</span>
+                            <span class="listing-card-user">{{ listing.user ? listing.user.email : 'Deleted user' }}</span>
                         </div>
                     </a>
                 {% endfor %}
