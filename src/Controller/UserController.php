@@ -54,16 +54,12 @@ class UserController extends AbstractController
     #[Route('/{id}', name: 'show', methods: ['GET'])]
     public function show(User $user): Response
     {
-        $this->denyAccessUnlessGranted('view', $user);
-
         return $this->render('user/show.html.twig', ['user' => $user]);
     }
 
     #[Route('/{id}/edit', name: 'edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, User $user): Response
     {
-        $this->denyAccessUnlessGranted('edit', $user);
-
         $form = $this->createForm(UserForm::class, $user, ['is_edit' => true]);
         $form->handleRequest($request);
 
@@ -87,9 +83,11 @@ class UserController extends AbstractController
     #[Route('/{id}', name: 'delete', methods: ['POST'])]
     public function delete(Request $request, User $user): Response
     {
-        $this->denyAccessUnlessGranted('delete', $user);
-
         if ($this->isCsrfTokenValid('delete' . $user->getId(), $request->getPayload()->getString('_token'))) {
+            if ($this->getUser() === $user) {
+                $request->getSession()->invalidate();
+            }
+
             $this->em->remove($user);
             $this->em->flush();
 

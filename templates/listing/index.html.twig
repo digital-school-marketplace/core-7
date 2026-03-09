@@ -77,11 +77,11 @@
                         <div class="listing-card-footer">
                             <span class="listing-card-price">€{{ listing.price }}</span>
                             <span style="display:flex; gap: 0.75rem; align-items:center;">
-                                {% set avg = listing.user.averageRating %}
+                                {% set avg = listing.user ? listing.user.averageRating ?? 0 : 0 %}
                                 {% if avg %}
                                     <span style="font-size: 0.8rem; color: var(--text-muted);">⭐ {{ avg }}</span>
                                 {% endif %}
-                                <span class="listing-card-user">{{ listing.user.email }}</span>
+                                <span class="listing-card-user">{{ listing.user ? listing.user.email : 'Deleted user' }}</span>
                             </span>
                         </div>
                     </a>

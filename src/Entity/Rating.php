@@ -17,11 +17,11 @@ class Rating
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'ratingsReceived')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private ?User $seller = null;
 
     #[ORM\ManyToOne]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private ?User $rater = null;
 
     #[ORM\Column]
