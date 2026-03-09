@@ -20,7 +20,8 @@ class Category
     /**
      * @var \Doctrine\Common\Collections\Collection<int, Listing>
      */
-    #[ORM\OneToMany(targetEntity: Listing::class, mappedBy: 'category')]
+
+    #[ORM\OneToMany(mappedBy: 'category', targetEntity: Listing::class, orphanRemoval: false)]
     private \Doctrine\Common\Collections\Collection $listings;
 
     public function __construct()
