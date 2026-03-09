@@ -46,6 +46,12 @@
         .listing-category {
             font-size: 0.9rem;
             color: #666;
+            margin-bottom: 8px;
+        }
+
+        .listing-user {
+            font-size: 0.9rem;
+            color: #888;
         }
     </style>
 
@@ -66,6 +72,10 @@
 
                 <div class="listing-category">
                     Category: {{ listing.category.name }}
+                </div>
+
+                <div class="listing-user">
+                    User: {{ listing.user.email }}
                 </div>
             </div>
         {% else %}
