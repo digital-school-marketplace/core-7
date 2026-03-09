@@ -84,8 +84,8 @@ class ListingRepository extends ServiceEntityRepository
         match ($sortBy) {
             'price_asc'  => $qb->orderBy('l.price', 'ASC'),
             'price_desc' => $qb->orderBy('l.price', 'DESC'),
-            'oldest'     => $qb->orderBy('l.id', 'ASC'),
-            default      => $qb->orderBy('l.id', 'DESC'),
+            'oldest'     => $qb->orderBy('l.createdAt', 'ASC'),
+            default      => $qb->orderBy('l.createdAt', 'DESC'),
         };
 
         return $qb

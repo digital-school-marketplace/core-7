@@ -62,6 +62,10 @@ class UserController extends AbstractController
     #[Route('/{id}/edit', name: 'edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, User $user): Response
     {
+        if (!$this->isGranted('ROLE_ADMIN') && $this->getUser() !== $user) {
+            throw $this->createAccessDeniedException();
+        }
+
         $form = $this->createForm(UserForm::class, $user, ['is_edit' => true]);
         $form->handleRequest($request);
 
@@ -85,6 +89,10 @@ class UserController extends AbstractController
     #[Route('/{id}', name: 'delete', methods: ['POST'])]
     public function delete(Request $request, User $user): Response
     {
+        if (!$this->isGranted('ROLE_ADMIN') && $this->getUser() !== $user) {
+            throw $this->createAccessDeniedException();
+        }
+
         if ($this->isCsrfTokenValid('delete' . $user->getId(), $request->getPayload()->getString('_token'))) {
             $isSelf = $this->getUser() === $user;
 
