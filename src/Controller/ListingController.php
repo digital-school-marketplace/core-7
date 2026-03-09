@@ -18,7 +18,7 @@ class ListingController extends AbstractController
     public function __construct(
         private readonly ListingRepository      $listingRepository,
         private readonly EntityManagerInterface $em,
-        private readonly CategoryRepository $categoryRepository,
+        private readonly CategoryRepository     $categoryRepository,
     )
     {
     }
@@ -26,23 +26,23 @@ class ListingController extends AbstractController
     #[Route('', name: 'index', methods: ['GET'])]
     public function index(Request $request): Response
     {
-        $page     = max(1, $request->query->getInt('page', 1));
-        $category = $request->query->get('category') ? (int) $request->query->get('category') : null;;
-        $minPrice = $request->query->get('min_price') ? (float) $request->query->get('min_price') : null;
-        $maxPrice = $request->query->get('max_price') ? (float) $request->query->get('max_price') : null;
-        $sortBy   = $request->query->get('sort', 'newest') ?? 'newest';
+        $page = max(1, $request->query->getInt('page', 1));
+        $category = $request->query->get('category') ? (int)$request->query->get('category') : null;
+        $minPrice = $request->query->get('min_price') ? (float)$request->query->get('min_price') : null;
+        $maxPrice = $request->query->get('max_price') ? (float)$request->query->get('max_price') : null;
+        $sortBy = $request->query->get('sort', 'newest') ?? 'newest';
 
         $listings = $this->listingRepository->findFiltered($category, $minPrice, $maxPrice, $sortBy, $page);
 
         return $this->render('listing/index.html.twig', [
-            'listings'   => $listings,
+            'listings' => $listings,
             'categories' => $this->categoryRepository->findAll(),
             'currentPage' => $page,
-            'filters'    => [
+            'filters' => [
                 'category' => $category,
-                'minPrice' => $minPrice,
-                'maxPrice' => $maxPrice,
-                'sortBy'   => $sortBy,
+                'min_price' => $minPrice,
+                'max_price' => $maxPrice,
+                'sort' => $sortBy,
             ],
         ]);
     }
@@ -75,7 +75,7 @@ class ListingController extends AbstractController
         $recommendations = $this->listingRepository->findRecommendations($listing);
 
         return $this->render('listing/show.html.twig', [
-            'listing'         => $listing,
+            'listing' => $listing,
             'recommendations' => $recommendations,
         ]);
     }

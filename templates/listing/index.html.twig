@@ -33,14 +33,14 @@
                 <label
                     style="display:block; font-size: 0.78rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-muted); margin-bottom: 0.4rem;">Min
                     price</label>
-                <input type="number" name="min_price" value="{{ filters.minPrice }}" placeholder="€0" min="0"
+                <input type="number" name="min_price" value="{{ filters.min_price }}" placeholder="€0" min="0"
                        step="0.01">
             </div>
             <div style="flex: 1; min-width: 100px;">
                 <label
                     style="display:block; font-size: 0.78rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-muted); margin-bottom: 0.4rem;">Max
                     price</label>
-                <input type="number" name="max_price" value="{{ filters.maxPrice }}" placeholder="€999" min="0"
+                <input type="number" name="max_price" value="{{ filters.max_price }}" placeholder="€999" min="0"
                        step="0.01">
             </div>
             <div style="flex: 1; min-width: 130px;">
@@ -48,14 +48,10 @@
                     style="display:block; font-size: 0.78rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-muted); margin-bottom: 0.4rem;">Sort
                     by</label>
                 <select name="sort" style="width:100%;">
-                    <option value="newest" {{ filters.sortBy == 'newest'     ? 'selected' : '' }}>Newest first</option>
-                    <option value="oldest" {{ filters.sortBy == 'oldest'     ? 'selected' : '' }}>Oldest first</option>
-                    <option value="price_asc" {{ filters.sortBy == 'price_asc'  ? 'selected' : '' }}>Price: low to
-                        high
-                    </option>
-                    <option value="price_desc" {{ filters.sortBy == 'price_desc' ? 'selected' : '' }}>Price: high to
-                        low
-                    </option>
+                    <option value="newest"     {{ filters.sort == 'newest'     ? 'selected' : '' }}>Newest first</option>
+                    <option value="oldest"     {{ filters.sort == 'oldest'     ? 'selected' : '' }}>Oldest first</option>
+                    <option value="price_asc"  {{ filters.sort == 'price_asc'  ? 'selected' : '' }}>Price: low to high</option>
+                    <option value="price_desc" {{ filters.sort == 'price_desc' ? 'selected' : '' }}>Price: high to low</option>
                 </select>
             </div>
             <div style="display: flex; gap: 0.5rem; align-items: flex-end;">
@@ -72,8 +68,7 @@
                             <span class="listing-card-category">{{ listing.category.name }}</span>
                         {% endif %}
                         <div class="listing-card-title">{{ listing.name }}</div>
-                        <div
-                            class="listing-card-desc">{{ listing.description|slice(0, 110) }}{% if listing.description|length > 110 %}…{% endif %}</div>
+                        <div class="listing-card-desc">{{ listing.description|slice(0, 110) }}{% if listing.description|length > 110 %}…{% endif %}</div>
                         <div class="listing-card-footer">
                             <span class="listing-card-price">€{{ listing.price }}</span>
                             <span style="display:flex; gap: 0.75rem; align-items:center;">
@@ -87,6 +82,20 @@
                     </a>
                 {% endfor %}
             </div>
+
+            <div style="display: flex; justify-content: center; gap: 0.5rem; margin-top: 2rem;">
+                {% if currentPage > 1 %}
+                    <a href="{{ path('listing_index', filters|merge({'page': currentPage - 1})) }}" class="btn btn-secondary">← Prev</a>
+                {% endif %}
+
+                <span style="display: flex; align-items: center; padding: 0 1rem; color: var(--text-muted);">
+                    Page {{ currentPage }}
+                </span>
+
+                {% if listings|length >= 20 %}
+                    <a href="{{ path('listing_index', filters|merge({'page': currentPage + 1})) }}" class="btn btn-secondary">Next →</a>
+                {% endif %}
+            </div>
         {% else %}
             <div class="empty">
                 <div class="empty-icon">🛍️</div>
@@ -95,21 +104,4 @@
             </div>
         {% endif %}
     </div>
-    {% if listings|length > 0 %}
-        <div style="display: flex; justify-content: center; gap: 0.5rem; margin-top: 2rem;">
-            {% if currentPage > 1 %}
-                <a href="{{ path('listing_index', filters|merge({'page': currentPage - 1})) }}"
-                   class="btn btn-secondary">← Prev</a>
-            {% endif %}
-
-            <span style="display: flex; align-items: center; padding: 0 1rem; color: var(--text-muted);">
-            Page {{ currentPage }}
-        </span>
-
-            {% if listings|length >= 20 %}
-                <a href="{{ path('listing_index', filters|merge({'page': currentPage + 1})) }}"
-                   class="btn btn-secondary">Next →</a>
-            {% endif %}
-        </div>
-    {% endif %}
 {% endblock %}
