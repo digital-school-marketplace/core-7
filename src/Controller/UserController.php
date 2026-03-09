@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 #[Route('/users', name: 'user_')]
 class UserController extends AbstractController
@@ -19,6 +20,7 @@ class UserController extends AbstractController
         private readonly UserRepository $userRepository,
         private readonly EntityManagerInterface $em,
         private readonly UserPasswordHasherInterface $passwordHasher,
+        private readonly TokenStorageInterface $tokenStorage,
     ) {}
 
     #[Route('', name: 'index', methods: ['GET'])]
@@ -84,7 +86,10 @@ class UserController extends AbstractController
     public function delete(Request $request, User $user): Response
     {
         if ($this->isCsrfTokenValid('delete' . $user->getId(), $request->getPayload()->getString('_token'))) {
-            if ($this->getUser() === $user) {
+            $isSelf = $this->getUser() === $user;
+
+            if ($isSelf) {
+                $this->tokenStorage->setToken(null);
                 $request->getSession()->invalidate();
             }
 
@@ -92,6 +97,10 @@ class UserController extends AbstractController
             $this->em->flush();
 
             $this->addFlash('success', 'User deleted.');
+
+            if ($isSelf) {
+                return $this->redirectToRoute('app_login');
+            }
         }
 
         return $this->redirectToRoute('user_index');
