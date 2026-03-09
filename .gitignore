@@ -10,4 +10,5 @@ composer.lock
 /public/bundles/
 /var/
 /vendor/
+/migrations
 ###< symfony/framework-bundle ###

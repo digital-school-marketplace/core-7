@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Categories</h1>
+
+    <a href="{{ path('category_new') }}">Add Category</a>
+
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">{{ message }}</div>
+    {% endfor %}
+
+    {% for category in categories %}
+        <div>
+            <p>{{ category.name }} ({{ category.listings|length }} listings)</p>
+            <a href="{{ path('category_show', { id: category.id }) }}">View</a>
+            <a href="{{ path('category_edit', { id: category.id }) }}">Edit</a>
+            <form method="post" action="{{ path('category_delete', { id: category.id }) }}">
+                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ category.id) }}">
+                <button type="submit" onclick="return confirm('Delete this category?')">Delete</button>
+            </form>
+        </div>
+    {% else %}
+        <p>No categories found.</p>
+    {% endfor %}
+{% endblock %}

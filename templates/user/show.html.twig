@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>{{ user.email }}</h1>
+    <p>Listings: {{ user.listings|length }}</p>
+
+    <a href="{{ path('user_edit', { id: user.id }) }}">Edit Account</a>
+
+    <form method="post" action="{{ path('user_delete', { id: user.id }) }}">
+        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ user.id) }}">
+        <button type="submit" onclick="return confirm('Delete your account?')">Delete Account</button>
+    </form>
+
+    <a href="{{ path('user_index') }}">Back</a>
+{% endblock %}

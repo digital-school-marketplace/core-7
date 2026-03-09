@@ -13,6 +13,7 @@ class ListingRepository extends ServiceEntityRepository
         parent::__construct($registry, Listing::class);
     }
 
+
     /**
      * Filter listings by category
      */
@@ -58,6 +59,7 @@ class ListingRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('l')
             ->leftJoin('l.category', 'c')
             ->addSelect('c');
+
 
         if ($categoryId) {
             $qb->andWhere('c.id = :category')

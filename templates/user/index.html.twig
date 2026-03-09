@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Users</h1>
+    <a href="{{ path('user_new') }}">Add User</a>
+
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">{{ message }}</div>
+    {% endfor %}
+
+    {% for user in users %}
+        <div>
+            <p>{{ user.email }}</p>
+            <a href="{{ path('user_show', { id: user.id }) }}">View</a>
+            <a href="{{ path('user_edit', { id: user.id }) }}">Edit</a>
+            <form method="post" action="{{ path('user_delete', { id: user.id }) }}">
+                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ user.id) }}">
+                <button type="submit" onclick="return confirm('Delete this user?')">Delete</button>
+            </form>
+        </div>
+    {% else %}
+        <p>No users found.</p>
+    {% endfor %}
+{% endblock %}
