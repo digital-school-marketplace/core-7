@@ -19,7 +19,6 @@
         "symfony/dotenv": "8.0.*",
         "symfony/flex": "^2.10",
         "symfony/framework-bundle": "8.0.*",
-        "symfony/maker-bundle": "^1.66",
         "symfony/runtime": "8.0.*",
         "symfony/twig-bundle": "8.0.*",
         "symfony/yaml": "8.0.*"
@@ -76,5 +75,8 @@
             "require": "8.0.*",
             "docker": true
         }
+    },
+    "require-dev": {
+        "symfony/maker-bundle": "^1.66"
     }
 }
